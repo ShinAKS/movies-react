@@ -12,7 +12,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [clicked, setClicked] = useState(false);
 
-  console.log(process.env);
+  //console.log(process.env);
 
   useEffect(() => {
     fetch(FEATURED_API)
