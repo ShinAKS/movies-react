@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Movie from "./Movie";
+import Nav from "./Nav";
 import "../styles.css";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import MovieDetail from "./MovieDetail";
 
 require("dotenv").config();
 
@@ -19,41 +22,44 @@ function App() {
       .then((res) => res.json())
       .then((data) => setMovies(data.results));
   }, [clicked]);
+
   const handleSubmit = function (event) {
     event.preventDefault();
-    console.log(SEARCH_API + searchTerm);
+    //console.log(SEARCH_API + searchTerm);
     let newTerm = SEARCH_API + searchTerm;
     fetch(newTerm)
       .then((res) => res.json())
       .then((data) => setMovies(data.results));
   };
 
-  const homeButtonHandler = () => setClicked(!clicked);
+  const homeButtonHandler = () => {
+    setClicked(!clicked);
+  };
 
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
   };
   return (
-    <>
-      <header>
-        <button onClick={homeButtonHandler}>
-          <i className="fas fa-video"></i>
-        </button>
-        <form onSubmit={handleSubmit}>
-          <input
-            className="search"
-            type="search"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={handleInputChange}
-          />
-        </form>
-      </header>
-      <div className="movie-container">
-        {movies.length > 0 &&
-          movies.map((movie) => <Movie key={movie.id} {...movie} />)}
+    <Router>
+      <div className="app">
+        <Nav
+          onHomeButtonClick={homeButtonHandler}
+          onSearchSubmit={handleSubmit}
+          value={searchTerm}
+          onInputChange={handleInputChange}
+        />
+
+        <Switch>
+          <Route path="/" exact>
+            <div className="movie-container">
+              {movies.length > 0 &&
+                movies.map((movie) => <Movie key={movie.id} {...movie} />)}
+            </div>
+          </Route>
+          <Route path="/movie/:id" exact component={MovieDetail}></Route>
+        </Switch>
       </div>
-    </>
+    </Router>
   );
 }
 
